@@ -11,6 +11,7 @@ function addValues(input_1, input_2, result_output) {
     else
         result = input_1.toString() + input_2.toString();
     console.log(result);
+    console.log(result_output);
 }
-console.log(addValues(5, 2, Result_output.Result_1));
-console.log("watch mode");
+addValues(5, 2, Result_output.Result_1);
+//# sourceMappingURL=script.js.map
