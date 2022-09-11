@@ -32,6 +32,9 @@ class MainName extends USerNames {
     dataList(data) {
         console.log(data);
     }
+    dscribe() {
+        console.log('Inherited the describe methode from an abstract class' + this.name);
+    }
 }
 const main = new MainName(55);
 class Surname extends MainName {
@@ -43,11 +46,42 @@ class Surname extends MainName {
     addSurname(surName) {
         this.surname.push(surName);
         this.surname.push(this.middleName);
+        if (!Surname.adminName)
+            throw new Error("admin name not found");
     }
     printSurname() {
         console.log(this.surname);
     }
 }
+Surname.adminName = "James";
+class First extends Surname {
+    constructor(middleName, surname) {
+        super("John", ["James"]);
+        this.middleName = middleName;
+        this.surname = surname;
+    }
+    static getInstance() {
+        if (First.instance)
+            return this.instance;
+        this.instance = new First("Ohms", ["mario"]);
+        console.log(this.instance);
+        return this.instance;
+    }
+    addSurname(surName) {
+        console.log("2nd Surname");
+        return;
+        this.surname.push(surName);
+        this.surname.push(this.middleName);
+        if (!Surname.adminName)
+            throw new Error("admin name not found");
+    }
+    printSurname() {
+        return;
+        console.log(this.surname);
+    }
+}
+let firstName = First.getInstance();
+firstName.addSurname("ohms");
 const surname = new Surname("Ohms", []);
 surname.addSurname("John");
 surname.dataList(55);

@@ -12,7 +12,7 @@ const userInfo: Format = {
     } 
 }
 
-class USerNames{
+abstract class USerNames {
     name: string
     id: number
     data: Format
@@ -27,8 +27,7 @@ class USerNames{
     addNameToOrder(surname: string): void {
         this.orders.push( this.name )
         this.orders = [...this.orders, surname]
-        console.log(this.orders);
-        
+        console.log(this.orders); 
     }
 
     getOrder(order: string): void {
@@ -36,6 +35,8 @@ class USerNames{
         console.log(this.orders);
         
     }
+
+    abstract dscribe(): void;
 }
 
 // const userNames = new USerNames( "JohnnyOhms", 247, userInfo )
@@ -54,18 +55,26 @@ class MainName extends USerNames {
         console.log(data);
         
     }
+
+    dscribe(): void {
+        console.log('Inherited the describe methode from an abstract class' + this.name);
+    }
 }
 
 const main = new MainName(55)
 
 class Surname extends MainName{
+    static readonly adminName: string = "James"
     constructor( public middleName: string, public surname: string[] ) {
         super(65)
     }
 
     addSurname(surName: string) {
         this.surname.push(surName)
-        this.surname.push(this.middleName)
+        this.surname.push( this.middleName )
+        if ( !Surname.adminName )
+            throw new Error("admin name not found")
+            
     }
 
     printSurname(): void {
@@ -73,6 +82,39 @@ class Surname extends MainName{
         
     }
 }
+
+class First extends Surname {
+    private static instance: First;
+    private constructor( public middleName: string, public surname: string[] ) {
+        super("John", ["James"])
+    }
+
+    static getInstance() {
+        if ( First.instance )
+            return this.instance
+        this.instance = new First( "Ohms", ["mario"] )
+        console.log( this.instance );
+        return this.instance  
+    }
+
+    addSurname( surName: string ) {
+        console.log("2nd Surname");
+        
+        return
+        this.surname.push(surName)
+        this.surname.push( this.middleName )
+        if ( !Surname.adminName )
+            throw new Error("admin name not found")    
+    }
+
+    printSurname(): void {
+        return
+        console.log(this.surname);
+    }
+}
+
+let firstName = First.getInstance()
+firstName.addSurname("ohms")
 
 const surname = new Surname( "Ohms", [] )
 surname.addSurname( "John" )
