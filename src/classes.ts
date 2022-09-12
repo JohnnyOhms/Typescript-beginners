@@ -2,6 +2,13 @@ type Format = {
     name: string;
     readonly id: number;
     result: ( name: string, id: number ) => void;
+    // result2 (name2:string) : void /* different format */
+}
+
+interface IFormat extends Format{
+    name: string;
+    readonly id: number;
+    result2( name: string ): void;
 }
 
 const userInfo: Format = {
