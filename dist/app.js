@@ -34,4 +34,9 @@ let catFood = {
 };
 animalFood(dogfood);
 animalFood(catFood);
+const errorMssg = {
+    response: "404",
+    name: "invalid name",
+    password: "wrong password"
+};
 //# sourceMappingURL=app.js.map

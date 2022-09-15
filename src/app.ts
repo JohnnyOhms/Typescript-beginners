@@ -74,4 +74,17 @@ let catFood: Animal = {
 }
 
 animalFood( dogfood )
-animalFood(catFood)
+animalFood( catFood )
+
+// index properties
+
+interface ErrorMessages {
+    [key: string]: string
+}
+
+const errorMssg: ErrorMessages = {
+    response: "404",
+    name: "invalid name",
+    password: "wrong password"
+}
+
