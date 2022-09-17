@@ -31,4 +31,21 @@ function objectKey(obj, key) {
     return obj[key];
 }
 objectKey({ name: "John", roles: ["code in js"] }, "roles");
+class Name {
+    constructor() {
+        this.name = [];
+    }
+    addDataToName(data) {
+        this.name.push(data);
+    }
+    printName() {
+        console.log(this.name);
+    }
+}
+const names = new Name();
+names.addDataToName('John');
+names.printName();
+const nameNum = new Name();
+nameNum.addDataToName(23);
+nameNum.printName();
 //# sourceMappingURL=generics.js.map

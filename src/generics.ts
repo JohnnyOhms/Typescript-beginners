@@ -57,6 +57,28 @@ function objectKey<T extends object, U extends keyof T>( obj: T, key: U ): T[U]{
 
 objectKey({name:"John", roles: ["code in js"]}, "roles")
 
+// generics on classes
+
+class Name <T>{
+    public name: Array<T> = []
+
+    addDataToName( data: T ) {
+        this.name.push(data)
+    }
+
+    printName() {
+        console.log(this.name);
+    }
+
+}
+
+const names = new Name<string>()
+names.addDataToName( 'John' )
+names.printName()
+
+const nameNum = new Name<number>()
+nameNum.addDataToName( 23 )
+nameNum.printName()
 
 
 
