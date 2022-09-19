@@ -1,33 +1,32 @@
 function component( temp: string, id: string) {    
-    return function template( constructor:any) {
-        // const data = new constructor()
-        const paragraph = document.getElementById(id) 
-        if ( paragraph ) {
-            paragraph.innerHTML = temp
-            let label = paragraph?.querySelector( "label" ) as HTMLLabelElement
-            label.textContent = "Decorators"
-        }   
+    return function <T extends { new( ...args: any[] ) : {user: string}}>( constructor: T) {
+        return class extends constructor {
+            constructor(...args: any[]){
+                super( "Typescript Decorator" )
+                const paragraph = document.getElementById(id) 
+                if ( paragraph ) {
+                    paragraph.innerHTML = temp
+                    let label = paragraph?.querySelector( "label" ) as HTMLLabelElement
+                    label.textContent = this.user
+                }
+            }
+        }
     }
-    
-
-    
 }
 
 
 @component("<label></label>", "para")
 class TempObj{
     name: Array<string> = ['John', 'Ohms']
-    user: string = "JOHNOHMS"
-    constructor() {
+    id: number = 255
+    user: string;
+    constructor( user: string) {
+        this.user = user
         console.log(this.name[0] + this.name[1] + " is studying his typscript course")
-    }
-
-    addNumberForm() {
-        return `<input type="number" id="num">`
     }
 }
 
-const tempObj = new TempObj()
+const tempObj = new TempObj("Typscript Decorator")
 
 // decorators on properties
 
@@ -95,5 +94,43 @@ class TaxPayment{
     }
       
 }
+
+// getting the property of  decorator descriptor
+
+function printName( target: object, methodName: string, descriptor: PropertyDescriptor ) {
+    let originalMethod = descriptor.value
+    
+    let dsc :PropertyDescriptor = {
+        configurable: true,
+        enumerable: false,
+        get() {
+            return originalMethod.bind(this)
+        }
+        
+    }
+    return dsc
+    // simplier term (methode) without the use of interface
+    
+    // let dsc = {
+    //     get() {
+    //         return originalMethod.bind(this)
+    //     }
+    // }
+    // return dsc
+}
+
+class Person{
+    massage: string = 'Decorator study';
+
+    @printName
+    printMessage() {
+        console.log(this.massage)
+    }
+}
+
+const person = new Person()
+
+const btn = document.querySelector( "button" ) as HTMLButtonElement
+btn.addEventListener("click", person.printMessage)
 
 
