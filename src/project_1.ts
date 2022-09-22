@@ -1,5 +1,4 @@
-
-function acessObjectThis( target: object, name: string, descriptor: PropertyDescriptor ) {
+function autoBind( target: object, name: string, descriptor: PropertyDescriptor ) {
     const mainMethod = descriptor.value;
     let obj: PropertyDescriptor= {
         configurable: true,
@@ -42,18 +41,46 @@ function validate( inputValidate: ValidaFormat ): boolean {
     return valid
 }
 
+enum Status {
+    initial,
+    final
+}
+
 class Project {
     constructor(
         public id: string,
         public name: string,
         public value: string,
-        public number : number
+        public number: number,
+        public ActiveStatus: Status
     ) {}
 }
+
+interface Dragable {
+    dragstartHandler( Event: DragEvent ): void;
+    dragendHandler( Event: DragEvent): void
+}
+
+interface DragTarget {
+    dragOverHandler( Event: DragEvent ): void | boolean
+    dragLeaveHandler( Event: DragEvent ): void
+    dropHandler( Event: DragEvent): void
+}
+
+type ProjectCompiler= { ( project: Project[] ): void } 
+
+// class State<T> {
+//     protected projectCompiler: ProjectCompiler<T>[] = [] 
+//     AddprojectCompiler( compiler: ProjectCompiler<T> ) {
+//         this.projectCompiler.push(compiler)
+//     }
+// }
 
 class ProjectStatus{
     private static instance: ProjectStatus
     projects: Project[] = []
+    protected projectCompiler: ProjectCompiler[] = [] 
+  
     constructor() {}
     
     static getInstance() {
@@ -64,23 +91,30 @@ class ProjectStatus{
         return this.instance;
     }
 
+    AddprojectCompiler( compiler: ProjectCompiler ) {
+        this.projectCompiler.push(compiler)
+    }
+
     addProject( name: string, value: string, number: number ) {
-        const project = new Project( Math.floor( Math.random()  * 10 ).toString(), name, value, number )
-        this.pushProjects(project)
-    }
-
-    pushProjects(project: Project): Project [] {
+        const project = new Project(Math.random().toString(), name, value, number, Status.initial )
         this.projects.push( project )
-        return this.sendProject()
+        this.updateProject()
     }
 
-    sendProject(): Project [] {
-        let projectsData: Project[] = this.projects
-        return projectsData
+    updateProject() {
+        for ( const fn of this.projectCompiler) {
+            fn( this.projects )
+        } 
     }
 
+    moveProject( project_Id: string, newStatus: Status ) {
+        const projectId = this.projects.find( project => project.id === project_Id )
+        if ( projectId ) {
+            projectId.ActiveStatus = newStatus
+            this.updateProject()
+        }
+    }
 }
-
 const projectStatus = ProjectStatus.getInstance()
 
 class InputElements {
@@ -100,7 +134,7 @@ class InputElements {
         this.formEL.addEventListener( 'submit', this.InputValues)
     }
 
-    @acessObjectThis
+    @autoBind
     private InputValues( e: Event ){
         e.preventDefault()
 
@@ -124,21 +158,21 @@ class InputElements {
             value: nameValue,
             required: true,
             minLengthString: 3,
-            maxLengthString: 15
+            maxLengthString: 20
         }
 
         const valValidate: ValidaFormat = {
             value: valValues,
             required: true,
             minLengthString: 3,
-            maxLengthString: 15
+            maxLengthString: 20
         }
 
         const numberValidate: ValidaFormat = {
             value: numberValue,
             required: true,
-            minLengthNumber: 2,
-            maxLengthNumber: 10
+            minLengthNumber: 1,
+            maxLengthNumber: 30
         }
 
         if (
@@ -154,22 +188,91 @@ class InputElements {
     }
 }
 
-class InitialResult{
-    listener : Project []
-    constructor() {
-        this.listener = projectStatus.sendProject()
-        this.destruction()
+class ProjectResult implements DragTarget{
+    assignedProject: Project[] = []
+    parentListEl: HTMLUListElement
+    constructor(private type: string) {
+        this.parentListEl = document.querySelector( `.${this.type}-result` ) as HTMLUListElement;    
+        projectStatus.AddprojectCompiler( ( project: Project[] )=>{
+            const relevantProject = project.filter( (project) => {
+                if ( this.type === "initial" ) {
+                    return project.ActiveStatus === Status.initial;
+                }
+                return project.ActiveStatus === Status.final;
+            } )
+            this.assignedProject = relevantProject;
+            this.showProject()
+            this.configure()
+        } )
+
     }
 
-    destruction() {
-        // console.log(projectStatus.projects);
-        console.log(this.listener);
+    showProject() {
+        this.parentListEl.innerHTML = ''
+        this.assignedProject.forEach( item => {
+            new RenderProject(item, this.parentListEl)
+        })   
     }
 
-    showResult() {
-        const parentListEl = document.querySelector( ".result" ) as HTMLUListElement
-        console.log(parentListEl)
+    configure() {
+        this.parentListEl.addEventListener("dragover", this.dragOverHandler)
+        this.parentListEl.addEventListener("dragleave", this.dragLeaveHandler)
+        this.parentListEl.addEventListener("drop", this.dropHandler)
+    }
+
+    @autoBind
+    dragOverHandler( Event: DragEvent ) : boolean {
+        Event.preventDefault()
+        return false;
+    }
+
+    @autoBind
+    dragLeaveHandler( Event: DragEvent ): void {
+        console.log(this.parentListEl);   
+    }
+
+    @autoBind
+    dropHandler( Event: DragEvent ): void {
+        Event.stopPropagation()
+        // if ( Event.dataTransfer) {
+            const projectId = Event.dataTransfer!.getData( "text/plain" )
+        projectStatus.moveProject(projectId, (this.type === "initial") ? Status.initial : Status.final)
+        
+        // }
     }
 }
+
+class RenderProject implements Dragable{
+    listEl: HTMLLIElement;
+    constructor( private project: Project, private Ulelement: HTMLUListElement ) {
+        this.listEl =  document.createElement( "li" )
+        this.renderProject()
+        this.configure()
+    }
+
+    renderProject() {
+        this.listEl.innerHTML = `<span>${ this.project.name }</span><br><span>${ this.project.value }</span><br><span>${ this.project.number }</span>`;
+        this.Ulelement.appendChild(this.listEl)
+    } 
+
+    configure() {
+        this.listEl.setAttribute("draggable", "true")
+        this.listEl.addEventListener("dragstart", this.dragstartHandler)
+        this.listEl.addEventListener("dragend", this.dragendHandler)
+    }
+
+    @autoBind
+    dragstartHandler( Event: DragEvent ): void {
+        Event.dataTransfer!.setData( "text/plain", this.project.id )
+        Event.dataTransfer!.effectAllowed = "move";
+    }
+
+    @autoBind
+    dragendHandler( Event: DragEvent ): void {}
+}
+
+const InitialResult = new ProjectResult("initial")
+const finalResult = new ProjectResult("final")
+
 
 const inputElements = new InputElements()

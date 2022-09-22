@@ -15,7 +15,7 @@
     <button>Send</button>
     <br>
     <br>
-    <form action="" class="form-field" autocomplete="off">
+    <form action="" class="form-field">
         <div>
             <input type="text" id="name" placeholder="names">
         </div>
@@ -30,18 +30,31 @@
         <br>
         <button>Enter</button>
     </form>
-    <div>
-        <h1>result</h1>
-        <ul class="result">
-
-        </ul>
+    <div class="table">
+        <h1>Intial Result</h1>
+        <ul class="initial-result"></ul>
     </div>
-    
+    <br>
+    <div class="table">
+        <h1>Fianl Result</h1>
+        <ul class="final-result"></ul>
+    </div>
     <!-- <script src="./dist/script.js"></script> -->
     <!-- <script src="./dist/classes.js"></script> -->
     <!-- <script src="./dist/app.js"></script> -->
     <!-- <script src="./dist/generics.js"></script> -->
     <!-- <script src="./dist/decorators_2.js"></script> -->
     <script src="./dist/project_1.js"></script>
+
+    <style>
+       .table{
+        border: 2px solid black;
+       }
+
+       ul{
+        background-color: grey;
+        padding: 1rem;
+       }
+    </style>
 </body>
 </html>
