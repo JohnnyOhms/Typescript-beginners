@@ -1,4 +1,3 @@
-"use strict";
 const userInfo = {
     name: "JOhnnyOhms",
     id: 25,
@@ -37,6 +36,7 @@ class MainName extends USerNames {
     }
 }
 const main = new MainName(55);
+console.log(main);
 class Surname extends MainName {
     constructor(middleName, surname) {
         super(65);
@@ -86,4 +86,14 @@ const surname = new Surname("Ohms", []);
 surname.addSurname("John");
 surname.dataList(55);
 surname.printSurname();
+export class NewEntry {
+    constructor(name, id) {
+        this.name = name;
+        this.id = id;
+        this.compute = [this.name, this.id];
+    }
+    print() {
+        console.log(this.compute);
+    }
+}
 //# sourceMappingURL=classes.js.map

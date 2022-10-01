@@ -5,11 +5,11 @@ type Format = {
     // result2 (name2:string) : void /* different format */
 }
 
-interface IFormat extends Format{
-    name: string;
-    readonly id: number;
-    result2( name: string ): void;
-}
+// interface IFormat extends Format{
+//     name: string;
+//     readonly id: number;
+//     result2( name: string ): void;
+// }
 
 const userInfo: Format = {
     name: "JOhnnyOhms",
@@ -68,7 +68,9 @@ class MainName extends USerNames {
     }
 }
 
-const main = new MainName(55)
+const main = new MainName( 55 )
+console.log(main);
+
 
 class Surname extends MainName{
     static readonly adminName: string = "James"
@@ -127,3 +129,15 @@ const surname = new Surname( "Ohms", [] )
 surname.addSurname( "John" )
 surname.dataList(55)
 surname.printSurname()
+
+export class NewEntry{
+    compute: [string, number]
+    constructor( private name: string, private id: number ) {
+        this.compute = [this.name, this.id]
+    }
+
+    print() {
+        console.log(this.compute); 
+    }
+
+}

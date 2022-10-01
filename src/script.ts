@@ -1,3 +1,5 @@
+import { NewEntry} from "./classes.js";
+
 enum Result_output {
     Result_1 = "number",
     Result_2 = "string"
@@ -22,3 +24,6 @@ function addValues(
 }
 
 addValues( 5, 2, Result_output.Result_1 )
+
+const newEntry = new NewEntry( "Johnny", 25 )
+newEntry.print()

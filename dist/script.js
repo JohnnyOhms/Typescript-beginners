@@ -1,4 +1,4 @@
-"use strict";
+import { NewEntry } from "./classes.js";
 var Result_output;
 (function (Result_output) {
     Result_output["Result_1"] = "number";
@@ -14,4 +14,6 @@ function addValues(input_1, input_2, result_output) {
     console.log(result_output);
 }
 addValues(5, 2, Result_output.Result_1);
+const newEntry = new NewEntry("Johnny", 25);
+newEntry.print();
 //# sourceMappingURL=script.js.map
